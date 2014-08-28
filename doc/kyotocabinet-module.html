@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>kyotocabinet</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >kyotocabinet</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;kyotocabinet
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="kyotocabinet-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== MODULE DESCRIPTION ==================== -->
+<h1 class="epydoc">Module kyotocabinet</h1><p class="nomargin-top"></p>
+<h1 class="heading">Python 3.x Binding of Kyoto Cabinet</h1>
+    <h2 class="heading">Introduction</h2>
+      <p>Kyoto Cabinet is a library of routines for managing a database.  
+      The database is a simple data file containing records, each is a pair
+      of a key and a value.  Every key and value is serial bytes with 
+      variable length.  Both binary data and character string can be used 
+      as a key and a value.  Each key must be unique within a database.  
+      There is neither concept of data tables nor data types.  Records are 
+      organized in hash table or B+ tree.</p>
+      <p>The following access methods are provided to the database: storing
+      a record with a key and a value, deleting a record by a key, 
+      retrieving a record by a key.  Moreover, traversal access to every 
+      key are provided.  These access methods are similar to ones of the 
+      original DBM (and its followers: NDBM and GDBM) library defined in 
+      the UNIX standard.  Kyoto Cabinet is an alternative for the DBM 
+      because of its higher performance.</p>
+      <p>Each operation of the hash database has the time complexity of 
+      &quot;O(1)&quot;.  Therefore, in theory, the performance is constant 
+      regardless of the scale of the database.  In practice, the 
+      performance is determined by the speed of the main memory or the 
+      storage device.  If the size of the database is less than the 
+      capacity of the main memory, the performance will seem on-memory 
+      speed, which is faster than std::map of STL.  Of course, the database
+      size can be greater than the capacity of the main memory and the 
+      upper limit is 8 exabytes.  Even in that case, each operation needs 
+      only one or two seeking of the storage device.</p>
+      <p>Each operation of the B+ tree database has the time complexity of 
+      &quot;O(log N)&quot;.  Therefore, in theory, the performance is 
+      logarithmic to the scale of the database.  Although the performance 
+      of random access of the B+ tree database is slower than that of the 
+      hash database, the B+ tree database supports sequential access in 
+      order of the keys, which realizes forward matching search for strings
+      and range search for integers.  The performance of sequential access 
+      is much faster than that of random access.</p>
+      <p>This library wraps the polymorphic database of the C++ API.  So, 
+      you can select the internal data structure by specifying the database
+      name in runtime.  This library works on Python 3.x (3.1 or later) 
+      only.  Python 2.x requires another dedicated package.</p>
+    <h2 class="heading">Installation</h2>
+      <p>Install the latest version of Kyoto Cabinet beforehand and get the
+      package of the Python binding of Kyoto Cabinet.</p>
+      <p>Enter the directory of the extracted package then perform 
+      installation.  If your system has the another command except for the 
+      &quot;python3&quot; command, edit the Makefile beforehand.:</p>
+<pre class="literalblock">
+make
+make check
+su
+make install
+</pre>
+      <p>Symbols of the module `kyotocabinet' should be included in each 
+      source file of application programs.:</p>
+<pre class="literalblock">
+import kyotocabinet
+</pre>
+      <p>An instance of the class `DB' is used in order to handle a 
+      database.  You can store, delete, and retrieve records with the 
+      instance.</p>
+    <h2 class="heading">Example</h2>
+      <p>The following code is a typical example to use a database.:</p>
+<pre class="literalblock">
+from kyotocabinet import *
+import sys
+
+# create the database object
+db = DB()
+
+# open the database
+if not db.open(&quot;casket.kch&quot;, DB.OWRITER | DB.OCREATE):
+    print(&quot;open error: &quot; + str(db.error()), file=sys.stderr)
+
+# store records
+if not db.set(&quot;foo&quot;, &quot;hop&quot;) or          not db.set(&quot;bar&quot;, &quot;step&quot;) or          not db.set(&quot;baz&quot;, &quot;jump&quot;):
+    print(&quot;set error: &quot; + str(db.error()), file=sys.stderr)
+
+# retrieve records
+value = db.get_str(&quot;foo&quot;)
+if value:
+    print(value)
+else:
+    print(&quot;get error: &quot; + str(db.error()), file=sys.stderr)
+
+# traverse records
+cur = db.cursor()
+cur.jump()
+while True:
+    rec = cur.get_str(True)
+    if not rec: break
+    print(rec[0] + &quot;:&quot; + rec[1])
+cur.disable()
+
+# close the database
+if not db.close():
+    print(&quot;close error: &quot; + str(db.error()), file=sys.stderr)
+</pre>
+      <p>The following code is a more complex example, which uses the 
+      Visitor pattern.:</p>
+<pre class="literalblock">
+from kyotocabinet import *
+import sys
+
+# create the database object
+db = DB()
+
+# open the database
+if not db.open(&quot;casket.kch&quot;, DB.OREADER):
+    print(&quot;open error: &quot; + str(db.error()), file=sys.stderr)
+
+# define the visitor
+class VisitorImpl(Visitor):
+    # call back function for an existing record
+    def visit_full(self, key, value):
+        print(&quot;{}:{}&quot;.format(key.decode(), value.decode()))
+        return self.NOP
+    # call back function for an empty record space
+    def visit_empty(self, key):
+        print(&quot;{} is missing&quot;.format(key.decode()), file=sys.stderr)
+        return self.NOP
+visitor = VisitorImpl()
+
+# retrieve a record with visitor
+if not db.accept(&quot;foo&quot;, visitor, False) or          not db.accept(&quot;dummy&quot;, visitor, False):
+    print(&quot;accept error: &quot; + str(db.error()), file=sys.stderr)
+
+# traverse records with visitor
+if not db.iterate(visitor, False):
+    print(&quot;iterate error: &quot; + str(db.error()), file=sys.stderr)
+
+# close the database
+if not db.close():
+    print(&quot;close error: &quot; + str(db.error()), file=sys.stderr)
+</pre>
+      <p>The following code is also a complex example, which is more suited
+      to the Python style.:</p>
+<pre class="literalblock">
+from kyotocabinet import *
+import sys
+
+# define the functor
+def dbproc(db):
+
+  # store records
+  db[b'foo'] = b'step';  # bytes is fundamental
+  db['bar'] = 'hop';     # string is also ok
+  db[3] = 'jump';        # number is also ok
+
+  # retrieve a record value
+  print(&quot;{}&quot;.format(db['foo'].decode()))
+
+  # update records in transaction
+  def tranproc():
+      db['foo'] = 2.71828
+      return True
+  db.transaction(tranproc)
+
+  # multiply a record value
+  def mulproc(key, value):
+      return float(value) * 2
+  db.accept('foo', mulproc)
+
+  # traverse records by iterator
+  for key in db:
+      print(&quot;{}:{}&quot;.format(key.decode(), db[key].decode()))
+
+  # upcase values by iterator
+  def upproc(key, value):
+      return value.upper()
+  db.iterate(upproc)
+
+  # traverse records by cursor
+  def curproc(cur):
+      cur.jump()
+      def printproc(key, value):
+          print(&quot;{}:{}&quot;.format(key.decode(), value.decode()))
+          return Visitor.NOP
+      while cur.accept(printproc):
+          cur.step()
+  db.cursor_process(curproc)
+
+# process the database by the functor
+DB.process(dbproc, 'casket.kch')
+</pre>
+    <h2 class="heading">License</h2>
+      <p>Copyright (C) 2009-2010 FAL Labs.  All rights reserved.</p>
+      <p>Kyoto Cabinet is free software: you can redistribute it and/or 
+      modify it under the terms of the GNU General Public License as 
+      published by the Free Software Foundation, either version 3 of the 
+      License, or any later version.</p>
+      <p>Kyoto Cabinet is distributed in the hope that it will be useful, 
+      but WITHOUT ANY WARRANTY; without even the implied warranty of 
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+      General Public License for more details.</p>
+
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Classes</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="kyotocabinet.Error-class.html" class="summary-name">Error</a><br />
+      Error data.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="kyotocabinet.Visitor-class.html" class="summary-name">Visitor</a><br />
+      Interface to access a record.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="kyotocabinet.FileProcessor-class.html" class="summary-name">FileProcessor</a><br />
+      Interface to process the database file.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="kyotocabinet.Cursor-class.html" class="summary-name">Cursor</a><br />
+      Interface of cursor to indicate a record.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="kyotocabinet.DB-class.html" class="summary-name">DB</a><br />
+      Interface of database abstraction.
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Functions</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="kyotocabinet-module.html#conv_bytes" class="summary-sig-name">conv_bytes</a>(<span class="summary-sig-arg">obj</span>)</span><br />
+      Convert any object to a string.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="kyotocabinet-module.html#atoi" class="summary-sig-name">atoi</a>(<span class="summary-sig-arg">str</span>)</span><br />
+      Convert a string to an integer.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="kyotocabinet-module.html#atoix" class="summary-sig-name">atoix</a>(<span class="summary-sig-arg">str</span>)</span><br />
+      Convert a string with a metric prefix to an integer.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="kyotocabinet-module.html#atof" class="summary-sig-name">atof</a>(<span class="summary-sig-arg">str</span>)</span><br />
+      Convert a string to a real number.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="kyotocabinet-module.html#hash_murmur" class="summary-sig-name">hash_murmur</a>(<span class="summary-sig-arg">str</span>)</span><br />
+      Get the hash value of a string by MurMur hashing.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="kyotocabinet-module.html#hash_fnv" class="summary-sig-name">hash_fnv</a>(<span class="summary-sig-arg">str</span>)</span><br />
+      Get the hash value of a string by FNV hashing.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="kyotocabinet-module.html#levdist" class="summary-sig-name">levdist</a>(<span class="summary-sig-arg">a</span>,
+        <span class="summary-sig-arg">b</span>,
+        <span class="summary-sig-arg">utf</span>)</span><br />
+      Calculate the levenshtein distance of two strings.</td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== VARIABLES ==================== -->
+<a name="section-Variables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Variables</span></td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="VERSION"></a><span class="summary-name">VERSION</span> = <code title="'x.y.z'"><code class="variable-quote">'</code><code class="variable-string">x.y.z</code><code class="variable-quote">'</code></code><br />
+      The version information.
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="__package__"></a><span class="summary-name">__package__</span> = <code title="None">None</code>
+    </td>
+  </tr>
+</table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td align="left" colspan="2" class="table-header">
+    <span class="table-header">Function Details</span></td>
+</tr>
+</table>
+<a name="conv_bytes"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">conv_bytes</span>(<span class="sig-arg">obj</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convert any object to a string.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>obj</code></strong> - the object.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the result string.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="atoi"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">atoi</span>(<span class="sig-arg">str</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convert a string to an integer.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>str</code></strong> - specifies the string.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the integer.  If the string does not contain numeric expression, 
+          0 is returned.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="atoix"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">atoix</span>(<span class="sig-arg">str</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convert a string with a metric prefix to an integer.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>str</code></strong> - the string, which can be trailed by a binary metric prefix.  
+          &quot;K&quot;, &quot;M&quot;, &quot;G&quot;, &quot;T&quot;, 
+          &quot;P&quot;, and &quot;E&quot; are supported.  They are 
+          case-insensitive.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the integer.  If the string does not contain numeric expression, 
+          0 is returned.  If the integer overflows the domain, INT64_MAX or
+          INT64_MIN is returned according to the sign.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="atof"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">atof</span>(<span class="sig-arg">str</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convert a string to a real number.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>str</code></strong> - specifies the string.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the real number.  If the string does not contain numeric 
+          expression, 0.0 is returned.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="hash_murmur"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">hash_murmur</span>(<span class="sig-arg">str</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the hash value of a string by MurMur hashing.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>str</code></strong> - the string.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the hash value.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="hash_fnv"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">hash_fnv</span>(<span class="sig-arg">str</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the hash value of a string by FNV hashing.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>str</code></strong> - the string.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the hash value.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="levdist"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">levdist</span>(<span class="sig-arg">a</span>,
+        <span class="sig-arg">b</span>,
+        <span class="sig-arg">utf</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Calculate the levenshtein distance of two strings.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>a</code></strong> - one string.</li>
+        <li><strong class="pname"><code>b</code></strong> - the other string.</li>
+        <li><strong class="pname"><code>utf</code></strong> - flag to treat keys as UTF-8 strings.</li>
+    </ul></dd>
+    <dt>Returns:</dt>
+        <dd>the levenshtein distance.</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th bgcolor="#70b0f0" class="navbar-select"
+          >&nbsp;&nbsp;&nbsp;Home&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            >kyotocabinet</th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri May 25 01:00:16 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
