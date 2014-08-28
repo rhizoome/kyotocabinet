@@ -1,3 +1,5 @@
+Forked by ganwell to support python 2/3 in one package
+
 ================================================================
  Kyoto Cabinet: a straightforward implementation of DBM
  Copyright (C) 2009-2010 FAL Labs

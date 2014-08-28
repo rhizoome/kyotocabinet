@@ -1,8 +1,8 @@
 from distutils.core import *
 from subprocess import *
 
-package_name = 'Kyoto Cabinet'
-package_version = '1.5'
+package_name = 'kyotocabinet'
+package_version = '1.6'
 package_description = 'a straightforward implementation of DBM'
 package_author = 'FAL Labs'
 package_author_email = 'info@fallabs.com'
@@ -27,7 +27,10 @@ if len(include_dirs) < 1:
     include_dirs = ['/usr/local/include']
 
 extra_compile_args = []
-sources = ['kyotocabinet.cc']
+if sys.version_info[0] == 2:
+    sources = ['kyotocabinet2.cc']
+else:
+    sources = ['kyotocabinet3.cc']
 
 library_dirs = []
 libraries = []
