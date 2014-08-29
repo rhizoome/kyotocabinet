@@ -6,8 +6,9 @@ package_version = '1.6'
 package_description = 'a straightforward implementation of DBM'
 package_author = 'FAL Labs'
 package_author_email = 'info@fallabs.com'
-package_url = 'http://fallabs.net/kyotocabinet/'
+package_url = 'http://fallabs.com/kyotocabinet/'
 module_name = 'kyotocabinet'
+
 
 def getcmdout(cmdargs):
     try:
@@ -51,16 +52,16 @@ if len(libraries) < 1:
         libraries = ['kyotocabinet', 'z', 'stdc++', 'rt', 'pthread', 'm', 'c']
 
 module = Extension(module_name,
-                   include_dirs = include_dirs,
-                   extra_compile_args = extra_compile_args,
-                   sources = sources,
-                   library_dirs = library_dirs,
-                   libraries = libraries)
+                   include_dirs=include_dirs,
+                   extra_compile_args=extra_compile_args,
+                   sources=sources,
+                   library_dirs=library_dirs,
+                   libraries=libraries)
 
-setup (name = package_name,
-       version = package_version,
-       description = package_description,
-       author = package_author,
-       author_email = package_author_email,
-       url = package_url,
-       ext_modules = [module])
+setup(name=package_name,
+      version=package_version,
+      description=package_description,
+      author=package_author,
+      author_email=package_author_email,
+      url=package_url,
+      ext_modules=[module])
