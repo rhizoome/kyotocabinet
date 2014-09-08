@@ -1,0 +1,3 @@
+include *.cc
+include README
+include setup.py
