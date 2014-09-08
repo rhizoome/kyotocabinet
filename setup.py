@@ -58,10 +58,26 @@ module = Extension(module_name,
                    library_dirs=library_dirs,
                    libraries=libraries)
 
-setup(name=package_name,
-      version=package_version,
-      description=package_description,
-      author=package_author,
-      author_email=package_author_email,
-      url=package_url,
-      ext_modules=[module])
+setup(
+    name=package_name,
+    version=package_version,
+    description=package_description,
+    author=package_author,
+    author_email=package_author_email,
+    url=package_url,
+    ext_modules=[module],
+    license='GPL',
+    zip_safe=False,
+    keywords='sidi',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+    ],
+)
