@@ -2,7 +2,7 @@ from distutils.core import *
 from subprocess import *
 
 package_name = 'kyotocabinet'
-package_version = '1.6'
+package_version = '1.8'
 package_description = 'a straightforward implementation of DBM'
 package_author = 'FAL Labs'
 package_author_email = 'info@fallabs.com'

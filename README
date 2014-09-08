@@ -1,4 +1,5 @@
-Forked by ganwell to support python 2/3 in one package
+Forked by ganwell@fangorn.ch to support python 2/3 in one package
+https://github.com/ganwell/kyotocabinet
 
 ================================================================
  Kyoto Cabinet: a straightforward implementation of DBM
