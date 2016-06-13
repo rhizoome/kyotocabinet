@@ -68,7 +68,7 @@ setup(
     ext_modules=[module],
     license='GPL',
     zip_safe=False,
-    keywords='sidi',
+    keywords='kyotocabinet, dbm, key-value',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
