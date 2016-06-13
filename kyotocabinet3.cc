@@ -17,11 +17,11 @@
 
 namespace kc = kyotocabinet;
 
+#include <Python.h>
 extern "C" {
 
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
-#include <Python.h>
 #include <structmember.h>
 
 
