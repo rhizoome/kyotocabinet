@@ -1,5 +1,13 @@
-PyPI package by: Jean-Louis Fuchs, Low Kian Seong
+PyPI package by: Jean-Louis Fuchs, Jyry Suvilehto, Low Kian Seong
 https://github.com/ganwell/kyotocabinet
+
+Changes:
+
+2016-06-13
+==========
+
+ * Python.h in 3.4+ contains C++ templates, so using extern "C" causes
+   errors. (@Jyrsa)
 
 ================================================================
  Kyoto Cabinet: a straightforward implementation of DBM
