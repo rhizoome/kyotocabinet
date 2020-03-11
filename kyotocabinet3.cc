@@ -42,7 +42,7 @@ typedef std::vector<std::string> StringVector;
 
 
 /* function prototypes */
-PyMODINIT_FUNC PyInit_kyotocabinet(void);
+PyMODINIT_FUNC PyInit__kyotocabinet(void);
 static bool setconstuint32(PyObject* pyobj, const char* name, uint32_t value);
 static void throwruntime(const char* message);
 static void throwinvarg();
@@ -555,7 +555,7 @@ private:
 /**
  * Entry point of the library.
  */
-PyMODINIT_FUNC PyInit_kyotocabinet(void) {
+PyMODINIT_FUNC PyInit__kyotocabinet(void) {
   if (!define_module()) return NULL;
   if (!define_err()) return NULL;
   if (!define_vis()) return NULL;
