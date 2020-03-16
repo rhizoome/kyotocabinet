@@ -1,13 +1,16 @@
-from distutils.core import *
-from subprocess import *
+import os
+import sys
+from subprocess import PIPE, Popen
+
+from setuptools import Extension, setup
 
 package_name = 'kyotocabinet'
-package_version = '1.10'
+package_version = '1.11'
 package_description = 'a straightforward implementation of DBM'
 package_author = 'FAL Labs'
 package_author_email = 'info@fallabs.com'
 package_url = 'http://fallabs.com/kyotocabinet/'
-module_name = 'kyotocabinet'
+module_name = '_kyotocabinet'
 
 
 def getcmdout(cmdargs):
@@ -65,7 +68,12 @@ setup(
     author=package_author,
     author_email=package_author_email,
     url=package_url,
+    packages=[package_name],
     ext_modules=[module],
+    install_requires=[
+        'lz4>=0.7.0',
+        'msgpack',
+    ],
     license='GPL',
     zip_safe=False,
     keywords='kyotocabinet, dbm, key-value',

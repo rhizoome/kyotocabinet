@@ -42,7 +42,7 @@ typedef std::vector<std::string> StringVector;
 
 
 /* function prototypes */
-PyMODINIT_FUNC initkyotocabinet(void);
+PyMODINIT_FUNC init_kyotocabinet(void);
 static bool setconstuint32(PyObject* pyobj, const char* name, uint32_t value);
 static void throwruntime(const char* message);
 static void throwinvarg();
@@ -560,7 +560,7 @@ private:
 /**
  * Entry point of the library.
  */
-PyMODINIT_FUNC initkyotocabinet(void) {
+PyMODINIT_FUNC init_kyotocabinet(void) {
   if (!define_module()) return;
   if (!define_err()) return;
   if (!define_vis()) return;
@@ -735,7 +735,7 @@ static bool define_module() {
       "Calculate the levenshtein distance of two strings." },
     { NULL, NULL, 0, NULL }
   };
-  mod_kc = Py_InitModule("kyotocabinet", method_def);
+  mod_kc = Py_InitModule("_kyotocabinet", method_def);
   if (PyModule_AddStringConstant(mod_kc, "VERSION", kc::VERSION) != 0) return false;
   mod_th = PyImport_ImportModule("threading");
   mod_time = PyImport_ImportModule("time");
