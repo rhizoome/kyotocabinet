@@ -1,2 +1,6 @@
 MANIFEST
-dist
+build/
+dist/
+*.egg-info/
+*.pyc
+*.pyo
