@@ -72,7 +72,7 @@ setup(
     ext_modules=[module],
     install_requires=[
         'lz4>=0.7.0',
-        'msgpack>=1.0.0',
+        'msgpack',
     ],
     license='GPL',
     zip_safe=False,
