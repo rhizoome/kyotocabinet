@@ -82,6 +82,7 @@ def publish(image):
             'apt install -y gcc libc-dev build-essential libkyotocabinet-dev',
             'make build',
             'make publish',
+            'make distclean',
         ],
         'environment': {
             'PYPI_USERNAME': {'from_secret': 'pypi_username'},

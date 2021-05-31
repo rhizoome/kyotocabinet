@@ -106,7 +106,11 @@ publish :
 	twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --repository-url ${PYPI_URL} dist/*
 
 
-.PHONY: all clean install check doc build publish
+distclean :
+	rm -rf build dist
+
+
+.PHONY: all clean install check doc build publish distclean
 
 
 
