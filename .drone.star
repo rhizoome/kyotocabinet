@@ -79,7 +79,7 @@ def publish(image):
         'commands': [
             'export BUILD_NUM=$(cat build_num)',
             'apt update',
-            'apt install gcc libc-dev build-essential libkyotocabinet-dev',
+            'apt install -y gcc libc-dev build-essential libkyotocabinet-dev',
             'make build',
             'make publish',
         ],
