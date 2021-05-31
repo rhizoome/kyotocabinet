@@ -7,6 +7,7 @@ PACKAGEDIR = $(PACKAGE)-$(VERSION)
 PACKAGETGZ = $(PACKAGE)-$(VERSION).tar.gz
 
 PYTHON = python3
+PIP = pip
 RUNENV = LD_LIBRARY_PATH=.:/lib:/usr/lib:/usr/local/lib:$(HOME)/lib
 
 
@@ -95,7 +96,17 @@ docclean :
 	rm -rf doc
 
 
-.PHONY: all clean install check doc
+build :
+	$(PIP) install wheel
+	BUILD_NUM=${BUILD_NUM} $(PYTHON) setup.py build bdist_wheel
+
+
+publish :
+	$(PIP) install twine
+	twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --repository-url ${PYPI_URL} dist/*
+
+
+.PHONY: all clean install check doc build publish
 
 
 
