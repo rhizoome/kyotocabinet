@@ -74,7 +74,7 @@ def branch_off_pipeline():
 
 def publish(image):
     return {
-        'name': 'publish',
+        'name': 'publish_%s' % image,
         'image': image,
         'commands': [
             'export BUILD_NUM=$(cat build_num)',
