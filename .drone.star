@@ -32,8 +32,7 @@ def publish_pipeline():
         'steps': [
             stop_if_new_version_branch(),
             generate_build_num_file(),
-            publish('python:3.8-slim'),
-            publish('python:3.9-slim'),
+            publish(),
             notify_author(
                 {'from_secret': 'drone_slack_bot_token'},
                 {'from_secret': 'drone_peopleforce_api_key'}
@@ -72,10 +71,10 @@ def branch_off_pipeline():
     }
 
 
-def publish(image):
+def publish():
     return {
-        'name': 'publish_%s' % image,
-        'image': image,
+        'name': 'publish_python:3.9-slim',
+        'image': 'python:3.9-slim',
         'commands': [
             'export BUILD_NUM=$(cat build_num)',
             'apt update',
