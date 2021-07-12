@@ -18,7 +18,7 @@ COMPRESSORS = {
     'lz4': (compress, decompress)
 }
 SERIALIZERS = {
-    'msgpack': (msgpack.dumps, partial(msgpack.loads, raw=False))
+    'msgpack': (msgpack.dumps, partial(msgpack.loads, strict_map_key=False))
 }
 
 
