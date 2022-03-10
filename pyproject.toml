@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "bcd-kyotocabinet"
+# Don't change the version. Version will be managed by CI via publish make target.
+version = "0.0.0"
+description = "a straightforward implementation of DBM"
+authors = ["FAL Labs <info@fallabs.com>"]
+license = "GPL"
+readme = "README"
+homepage = "http://fallabs.com/kyotocabinet"
+repository = "https://github.com/getgoing/kyotocabinet"
+documentation = "https://dbmx.net/kyotocabinet/pythondoc"
+keywords = ["kyotocabinet", "dbm", "key-value"]
+packages = [
+    {include = "kyotocabinet"},
+]
+include = [
+    # C extensions must be included in the wheel distributions
+    {path = "*.so", format = "wheel"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+lz4 = ">=0.7.0"
+msgpack = ">=1.0"
+
+[tool.poetry.dev-dependencies]
+coverage = ">=5.5.0"
+flake8 = ">=3.9.1"
+flake8-comprehensions = ">=3.4.0"
+flake8-docstrings = ">=1.6.0"
+flake8-fancy-header = ">=0.3.0"
+flake8-import-order = ">=0.18.1"
+flake8-quotes = ">=3.2.0"
+flake8-sorted-keys = ">=0.2.0"
+flake8-string-format = ">=0.3.0"
+flakeheaven = ">=0.11.0"
+ipdb = ">=0.13.7"
+ipython = ">=7.23.1"
+ipython-autotime = ">=0.3.1"
+line-profiler = ">=3.2.6"
+pytest = ">=6.2.3"
+pytest-cov = ">=2.12.0"
+pytest-custom-exit-code = ">=0.3.0"
+
+[tool.poetry.build]
+generate-setup-file = false
+script = "build.py"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

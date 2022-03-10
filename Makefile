@@ -1,48 +1,38 @@
-# Makefile for Kyoto Cabinet for Python
-
-
-PACKAGE = kyotocabinet-python
-VERSION = 1.22
-PACKAGEDIR = $(PACKAGE)-$(VERSION)
-PACKAGETGZ = $(PACKAGE)-$(VERSION).tar.gz
+PROJECT = kyotocabinet
+VERSION = $(shell cat VERSION)
+BUILD_NUM ?= 0
 
 PYTHON = python3
-PIP = pip
 RUNENV = LD_LIBRARY_PATH=.:/lib:/usr/lib:/usr/local/lib:$(HOME)/lib
 
+install: clean
+	@poetry install
 
-all :
-	$(PYTHON) setup.py build
-	cp -f build/*/*.so .
-	@printf '\n'
-	@printf '#================================================================\n'
-	@printf '# Ready to install.\n'
-	@printf '#================================================================\n'
-
+update: clean
+	@poetry update
 
 clean :
-	rm -rf casket casket* *~ *.tmp *.kcss *.so *.pyc build hoge moge tako ika
+	rm -rf casket casket* *.kcss *.so *.pyc build dist hoge moge tako ika
+	rm -rf */__pycache__
+	rm -rf */*.pyc
 
+pep8 flake:
+	@poetry run flakeheaven lint $(PROJECT)
 
-install :
-	$(PYTHON) setup.py install
-	@printf '\n'
-	@printf '#================================================================\n'
-	@printf '# Thanks for using Kyoto Cabinet for Python.\n'
-	@printf '#================================================================\n'
+test: build
+	@poetry run pytest tests/
 
+static-checks: pep8
 
-uninstall :
-	$(PYTHON) setup.py install --record files.tmp
-	xargs rm -f < files.tmp
+build:
+	@poetry version "${VERSION}.${BUILD_NUM}"
+	@poetry build -f wheel -n
 
+publish:
+	@poetry config repositories.bcd ${PYPI_URL}
+	@poetry publish -r bcd -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD}
 
-dist :
-	$(MAKE) clean
-	cd .. && tar cvf - $(PACKAGEDIR) | gzip -c > $(PACKAGETGZ)
-
-
-check :
+check: build
 	$(MAKE) DBNAME=":" RNUM="10000" check-each
 	$(MAKE) DBNAME="*" RNUM="10000" check-each
 	$(MAKE) DBNAME="%" RNUM="10000" check-each
@@ -55,8 +45,7 @@ check :
 	@printf '# Checking completed.\n'
 	@printf '#================================================================\n'
 
-
-check-each :
+check-each:
 	rm -rf casket*
 	$(RUNENV) $(PYTHON) kctest.py order "$(DBNAME)" "$(RNUM)"
 	$(RUNENV) $(PYTHON) kctest.py order -rnd "$(DBNAME)" "$(RNUM)"
@@ -75,43 +64,20 @@ check-each :
 	$(RUNENV) $(PYTHON) kctest.py misc "$(DBNAME)"
 	rm -rf casket*
 
-
-check-forever :
+check-forever:
 	while true ; \
 	  do \
 	    $(MAKE) check || break ; \
 	  done
 
-
-doc :
-	$(MAKE) docclean
+doc: docclean
 	cp -f kyotocabinet-doc.py kyotocabinet.py
-	-[ -f kyotocabinet.so ] && mv -f kyotocabinet.so kyotocabinet-mod.so || true
+	-mv -f kyotocabinet kyotocabinet-mod || true
 	-epydoc --name kyotocabinet --no-private --no-sourcecode -o doc -q kyotocabinet.py
-	-[ -f kyotocabinet-mod.so ] && mv -f kyotocabinet-mod.so kyotocabinet.so || true
+	-mv -f kyotocabinet-mod kyotocabinet || true
 	rm -f kyotocabinet.py
 
-
-docclean :
+docclean:
 	rm -rf doc
 
-
-build :
-	$(PIP) install wheel
-	BUILD_NUM=${BUILD_NUM} $(PYTHON) setup.py build bdist_wheel
-
-
-publish :
-	$(PIP) install twine
-	twine upload -u ${PYPI_USERNAME} -p ${PYPI_PASSWORD} --repository-url ${PYPI_URL} dist/*
-
-
-distclean :
-	rm -rf build dist
-
-
-.PHONY: all clean install check doc build publish distclean
-
-
-
-# END OF FILE
+.PHONY: install update clean pep8 test static-checks build publish check check-each check-forever doc docclean
