@@ -80,9 +80,8 @@ def publish():
             'apt update',
             'apt install -y gcc libc-dev build-essential libkyotocabinet-dev curl',
             'curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python',
-            'source $HOME/.poetry/env',
-            'make build',
-            'make publish',
+            '. $HOME/.poetry/env && make build',
+            '. $HOME/.poetry/env && make publish',
         ],
         'environment': {
             'PYPI_USERNAME': {'from_secret': 'pypi_username'},
