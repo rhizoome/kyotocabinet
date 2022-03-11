@@ -78,7 +78,7 @@ def publish():
         'commands': [
             'export BUILD_NUM=$(cat build_num)',
             'apt update',
-            'apt install -y gcc libc-dev build-essential libkyotocabinet-dev curl',
+            'apt install -y gcc libc-dev build-essential libkyotocabinet-dev curl kyotocabinet-utils',
             'curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python',
             '. $HOME/.poetry/env && make build',
             '. $HOME/.poetry/env && make publish',
