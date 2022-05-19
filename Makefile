@@ -16,6 +16,9 @@ clean :
 	rm -rf */__pycache__
 	rm -rf */*.pyc
 
+hooks:
+	pre-commit install --hook-type pre-commit --hook-type pre-push
+
 pep8 flake:
 	@poetry run flakeheaven lint $(PROJECT)
 
@@ -80,4 +83,5 @@ doc: docclean
 docclean:
 	rm -rf doc
 
-.PHONY: install update clean pep8 test static-checks build publish check check-each check-forever doc docclean
+.PHONY: install update clean pep8 hooks test static-checks build publish \
+	check check-each check-forever doc docclean

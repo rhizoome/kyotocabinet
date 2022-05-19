@@ -30,6 +30,7 @@ lz4 = ">=0.7.0"
 msgpack = ">=1.0"
 
 [tool.poetry.dev-dependencies]
+black = ">=22.3.0"
 coverage = ">=5.5.0"
 flake8 = ">=3.9.1"
 flake8-comprehensions = ">=3.4.0"
@@ -43,10 +44,56 @@ flakeheaven = ">=0.11.0"
 ipdb = ">=0.13.7"
 ipython = ">=7.23.1"
 ipython-autotime = ">=0.3.1"
+isort = ">=5.10.1"
 line-profiler = ">=3.2.6"
+pre-commit = ">=2.19.0"
+pre-commit-hooks = ">=4.2.0"
 pytest = ">=6.2.3"
 pytest-cov = ">=2.12.0"
 pytest-custom-exit-code = ">=0.3.0"
+
+[tool.flakeheaven]
+application-import-names = ["kyotocabinet"]
+application-package-names = []
+exclude = ["tests/*"]
+import-order-style = "edited"
+max-complexity = 22
+
+[tool.flakeheaven.plugins]
+pyflakes = ["+*"]
+mccabe = ["+*"]
+pycodestyle = ["+*",  "-W504", "-E203"]
+"flake8-*" = ["+*"]
+flake8-import-order = ["-I202"]
+flake8-quotes = ["-Q003"]
+flake8-docstrings = [
+"-D100", "-D101", "-D102", "-D103", "-D105", "-D106", "-D107", "-D205", "-D400"
+]
+
+[tool.isort]
+case_sensitive = false
+combine_as_imports = true
+combine_star = true
+ensure_newline_before_comments = true
+force_grid_wrap = 0
+include_trailing_comma = true
+known_application_imports = ['kyotocabinet']
+line_length = 79
+lines_after_imports = 2
+lines_between_types = 1
+multi_line_output = 3
+order_by_type = false
+reverse_relative = true
+sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'APPLICATION_IMPORTS', 'LOCALFOLDER']
+use_parentheses = true
+
+[tool.black]
+exclude = '(/snapshots/)'
+include = '(\.py$)'
+line-length = 79
+target-version = ['py39']
+skip-string-normalization = true
+safe = true
 
 [tool.poetry.build]
 generate-setup-file = false

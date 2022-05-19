@@ -1,0 +1,41 @@
+exclude: snapshot
+repos:
+  - repo: local
+    hooks:
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        entry: trailing-whitespace-fixer
+        language: python
+        types: [text]
+        stages: [commit]
+      - id: end-of-file-fixer
+        name: Fix End of Files
+        entry: end-of-file-fixer
+        language: python
+        types: [text]
+        stages: [commit]
+      - id: debug-statements
+        name: Debug Statements
+        entry: debug-statement-hook
+        language: python
+        types: [python]
+        stages: [commit]
+      - id: isort
+        name: ISort
+        entry: isort
+        language: python
+        types: [python]
+        stages: [commit]
+      - id: black
+        name: Black
+        entry: black
+        language: python
+        types: [python]
+        stages: [commit]
+      - id: pytest
+        name: pytest
+        entry: make test
+        language: system
+        stages: [push]
+        pass_filenames: false
+        always_run: true

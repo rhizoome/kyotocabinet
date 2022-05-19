@@ -1,3 +1,8 @@
+"""
+==================
+kyotocabinet.utils
+==================
+"""
 import time
 
 
@@ -12,10 +17,12 @@ def green_iter(iterable, sleep_every=100):
 def smart_str(value, encoding='utf-8', errors='strict'):
     """Convert Python object to string."""
     if isinstance(value, dict):
-        return str({
-            smart_str(dict_key): smart_str(dict_value)
-            for dict_key, dict_value in value.items()
-        })
+        return str(
+            {
+                smart_str(dict_key): smart_str(dict_value)
+                for dict_key, dict_value in value.items()
+            }
+        )
     if isinstance(value, (list, tuple)):
         return str(tuple(map(smart_str, value)))
     if isinstance(value, bytes):
@@ -33,7 +40,9 @@ else:
 if _gevent_enabled:
     green_sleep = time.sleep
 else:
+
     def green_sleep(seconds):
         pass
+
 
 del _gevent_enabled

@@ -1,3 +1,8 @@
+"""
+====================
+kyotocabinet.helpers
+====================
+"""
 import os
 
 from collections.abc import MutableMapping
@@ -15,7 +20,7 @@ from .utils import green_iter, green_sleep, smart_str
 
 COMPRESSORS = {
     None: (lambda item: item, lambda item: item),
-    'lz4': (compress, decompress)
+    'lz4': (compress, decompress),
 }
 SERIALIZERS = {
     'msgpack': (msgpack.dumps, partial(msgpack.loads, strict_map_key=False))
@@ -81,8 +86,8 @@ class KyotoCabinetClient(object):
                 self.disconnect_all()
             filenames = (
                 [self.path]
-                if self.simple_mode else
-                (item for item in list(os.walk(self.path))[0][-1])
+                if self.simple_mode
+                else (item for item in list(os.walk(self.path))[0][-1])
             )
             for filename in filenames:
                 try:
@@ -113,8 +118,9 @@ class KyotoCabinetClient(object):
         """Get connection to one DB."""
         if not self._connection_pool:
             assert self.path.endswith('kch')
-            self._connection_pool = KyotoCabinetDict(self.path,
-                                                     **self._options)
+            self._connection_pool = KyotoCabinetDict(
+                self.path, **self._options
+            )
         return self._connection_pool
 
     def get_connection_splitted(self, key, prefix=None):
@@ -122,8 +128,9 @@ class KyotoCabinetClient(object):
         prefix = key.rsplit(':', 1)[0] if prefix is None else prefix
         if prefix not in self._connection_pool:
             file_name = '{0}.kch'.format(os.path.join(self.path, prefix))
-            self._connection_pool[prefix] = KyotoCabinetDict(file_name,
-                                                             **self._options)
+            self._connection_pool[prefix] = KyotoCabinetDict(
+                file_name, **self._options
+            )
         return self._connection_pool[prefix]
 
     def get(self, key):
@@ -219,12 +226,14 @@ class KyotoCabinetClient(object):
 
 def _write_operation(func):
     """Decorate method to mark write operations in KyotoCabinetDict class."""
+
     @wraps(func)
     def wrapper(self, *args, **kwargs):
         if self._read_only:
             raise RuntimeError('Storage is in read-only mode')
         with self._write_lock:
             return func(self, *args, **kwargs)
+
     return wrapper
 
 
@@ -249,9 +258,14 @@ class KyotoCabinetDict(MutableMapping):
     # within the same process
     _opened_in_write_mode = set()
 
-    def __init__(self, path, read_only=True,
-                 serializer='msgpack', compressor='lz4',
-                 open_options='#opts=s#msiz=0#bnum=524288#apow=3'):
+    def __init__(
+        self,
+        path,
+        read_only=True,
+        serializer='msgpack',
+        compressor='lz4',
+        open_options='#opts=s#msiz=0#bnum=524288#apow=3',
+    ):
         # Store args for future use
         self._path = os.path.abspath(path)
         self._read_only = read_only
@@ -261,7 +275,8 @@ class KyotoCabinetDict(MutableMapping):
         self._serializer = SERIALIZERS[serializer]
         # Open kyoto storage
         self._db = self.__open_kyoto_file(
-            self._path, self._read_only, self._open_options)
+            self._path, self._read_only, self._open_options
+        )
         self._write_lock = RLock()
 
     def __open_kyoto_file(self, path, read_only, open_options):
@@ -269,7 +284,8 @@ class KyotoCabinetDict(MutableMapping):
         assert path.endswith('.kch'), 'Should have .kch extension'
         if not read_only and path in KyotoCabinetDict._opened_in_write_mode:
             raise RuntimeError(
-                'File {0} is already opened in the write mode'.format(path))
+                'File {0} is already opened in the write mode'.format(path)
+            )
         db = DB(DB.GEXCEPTIONAL)
         mode = DB.OWRITER | DB.OCREATE
         if read_only:
@@ -277,7 +293,7 @@ class KyotoCabinetDict(MutableMapping):
         try:
             result = db.open(
                 '{0}{1}'.format(path, open_options),
-                mode | DB.OTRYLOCK | DB.ONOREPAIR
+                mode | DB.OTRYLOCK | DB.ONOREPAIR,
             )
         except KyotoError:
             result = None
@@ -285,7 +301,8 @@ class KyotoCabinetDict(MutableMapping):
         if not result:
             raise RuntimeError(
                 'Failed to open kyoto file: {0} Error: {1}'.format(
-                    path, db.error())
+                    path, db.error()
+                )
             )
         if not read_only:
             KyotoCabinetDict._opened_in_write_mode.add(path)
@@ -372,7 +389,8 @@ class KyotoCabinetDict(MutableMapping):
             # Replace original file with new one and reopen it
             os.rename(tmp_path, self._path)
             self._db = self.__open_kyoto_file(
-                self._path, self._read_only, self._open_options)
+                self._path, self._read_only, self._open_options
+            )
 
     def sync(self, hard=True):
         """Flush all updates to the disk.
