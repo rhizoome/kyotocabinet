@@ -1,0 +1,3 @@
+# the following github users/groups will be added to PR as reviewers automatically
+# see https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+*       @getgoing/zulu
